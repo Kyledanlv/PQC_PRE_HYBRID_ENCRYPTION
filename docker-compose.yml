@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  pqc_server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: pqc-node:latest
+    container_name: pqc_server_web
+    ports:
+      - "8082:5001"
+    environment:
+      - PYTHONUNBUFFERED=1
+    #Default command to activate Server Daemon
+    command: ["python3", "src/web_server.py"]
+    volumes:
+      #Mount real date storage with the one inside container
+      - ./data/server_vault:/app/data
+      - ./src:/app/src
+    networks:
+      - private_net
+    restart: unless-stopped
+
+  pqc_proxy:
+    image: haproxy:2.8-alpine
+    container_name: pqc_proxy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./proxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      - public_net
+      - private_net
+    depends_on:
+      - pqc_server
+    restart: unless-stopped
+
+  pqc_client:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: pqc-node:latest
+    container_name: pqc_client
+    ports:
+      - "8081:5000"
+    #Keep-Alive technique to keep container running background 
+    command: ["python3", "src/web_client.py"]
+    volumes:
+      - ./data/client_workspace:/app/data
+      - ./src:/app/src
+    networks:
+      - public_net
+
+networks:
+  public_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
+  private_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24

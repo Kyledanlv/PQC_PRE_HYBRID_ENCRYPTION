@@ -1,0 +1,6 @@
+cffi==2.0.0
+cryptography==46.0.5
+liboqs-python==0.14.1
+pycparser==3.0
+flask
+requests

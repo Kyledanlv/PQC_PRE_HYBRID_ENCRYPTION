@@ -1,0 +1,9 @@
+git stautus 
+check trạng thái hiện tại
+
+git add . 
+đưa toàn bộ thay đổi lên bộ nhớ đệm
+
+git commit -m "feat(core): tích hợp liboqs, hoàn thiện module mã hóa lai và kịch bản kiểm thử"
+
+git push

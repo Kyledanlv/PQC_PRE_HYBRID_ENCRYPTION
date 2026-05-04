@@ -1,0 +1,7 @@
+Lenh bat goi tin
+docker exec -it pqc_server tcpdump -i eth0 tcp port 5000 -w /app/data/pqc_capture.pcap
+
+Lenh kich hoat luu luong
+docker exec -it pqc_client python3 src/client.py --action upload --target pqc_proxy:8080 --file secret.txt --dir /app/data
+docker exec -it pqc_client python3 src/client.py --action download --target pqc_proxy:8080 --file secret.txt --dir /app/data
+
